@@ -1,0 +1,11 @@
+rail_id,rail_type,settlement_speed,description
+STRIPE,stripe,fast,Card-based global payments
+PAYPAL,paypal,fast,Wallet-based payments
+WISE,bank,medium,Low-cost international bank transfers
+SWIFT,bank,slow,Traditional correspondent banking
+UPI,bank,instant,India domestic real-time payments
+SEPA,bank,medium,EU bank transfer system
+ACH,bank,slow,US domestic bank transfers
+USDC_ETH,stablecoin,fast,USDC on Ethereum
+USDC_SOL,stablecoin,very_fast,USDC on Solana
+USDT_TRON,stablecoin,very_fast,USDT on Tron

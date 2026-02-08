@@ -1,0 +1,13 @@
+currency_code,currency_type,country
+USD,fiat,United States
+INR,fiat,India
+EUR,fiat,European Union
+GBP,fiat,United Kingdom
+JPY,fiat,Japan
+AUD,fiat,Australia
+CAD,fiat,Canada
+SGD,fiat,Singapore
+AED,fiat,United Arab Emirates
+BRL,fiat,Brazil
+USDC,stablecoin,Global
+USDT,stablecoin,Global
