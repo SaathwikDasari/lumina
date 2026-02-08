@@ -31,7 +31,6 @@ fn main() {
         .and_then(|s| s.trim().parse().ok())
         .unwrap_or(100.0);
 
-    // Load + build graph
     let routes = config::load_routes("../data/routes.csv");
     let graph = graph::build_graph(routes);
 
@@ -66,7 +65,6 @@ fn main() {
 
     let fee_breakdown = fee::compute_value_based_fee(final_amount, baseline_amount);
 
-    // ---- CLI OUTPUT (shows baseline clearly) ----
     println!("\n================= LUMINA ROUTE RESULT =================");
     println!("From: {}   To: {}   Input Amount: {:.2}", from, to, amount_input);
     println!("Advisory: {}", advisory_str);
@@ -78,7 +76,6 @@ fn main() {
     println!("Platform Fee:        {:.4}", fee_breakdown.platform_fee);
     println!("=======================================================\n");
 
-    // Save JSON output (unchanged)
     let result = ResultOutput {
         route: path,
         final_amount,

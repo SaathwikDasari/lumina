@@ -4,7 +4,6 @@ use crate::cost::apply_cost;
 use crate::graph::Graph;
 use crate::model::LiquidityCondition;
 
-/// Finds the route that maximizes the final amount (best path).
 pub fn find_best_route(
     graph: &Graph,
     liquidity_map: &HashMap<String, LiquidityCondition>,
@@ -12,7 +11,6 @@ pub fn find_best_route(
     end: &str,
     start_amount: f64,
 ) -> (Vec<String>, f64) {
-    // Normalize inputs (so CLI/UI can pass "jpy", " inr ", etc.)
     let start = start.trim().to_uppercase();
     let end = end.trim().to_uppercase();
 
@@ -67,7 +65,6 @@ pub fn find_best_route(
         }
     }
 
-    // Reconstruct path
     let mut path = Vec::new();
     let mut node = end.clone();
 
@@ -83,11 +80,7 @@ pub fn find_best_route(
     (path, final_amount)
 }
 
-/// Baseline = "legacy / non-optimized" reference outcome.
-/// We compute the direct route (start -> end) if available, then apply a small penalty
-/// to ensure baseline is strictly worse than the best-case for demos/UX.
-///
-/// If there is no direct route, returns 0.0.
+
 pub fn find_baseline_route(
     graph: &Graph,
     liquidity_map: &HashMap<String, LiquidityCondition>,
@@ -98,12 +91,10 @@ pub fn find_baseline_route(
     let start = start.trim().to_uppercase();
     let end = end.trim().to_uppercase();
 
-    // Baseline penalty (tweak if you want)
     const BASELINE_EXTRA_FEE_PCT: f64 = 0.75;      // +0.75% fee
     const BASELINE_EXTRA_SLIPPAGE_PCT: f64 = 0.25; // +0.25% slippage
     const MIN_GAP: f64 = 0.0001;                   // prevents equality due to rounding
 
-    // Compute direct amount first
     let mut direct = 0.0;
     if let Some(edges) = graph.get(&start) {
         for edge in edges {
@@ -125,16 +116,14 @@ pub fn find_baseline_route(
         return 0.0;
     }
 
-    // Apply penalty to make baseline worse than direct
     let baseline = apply_cost(
         direct,
         BASELINE_EXTRA_FEE_PCT,
         BASELINE_EXTRA_SLIPPAGE_PCT,
-        1.0,  // no extra FX rate, just inefficiency
-        None, // no extra liquidity constraint
+        1.0,  
+        None, 
     );
 
-    // Guarantee strict less-than (avoid equality from rounding)
     if baseline >= direct {
         (direct - MIN_GAP).max(0.0)
     } else {
