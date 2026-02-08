@@ -9,10 +9,21 @@ mod fee;
 
 use output::{ResultOutput, write_result};
 use std::collections::HashMap;
+use std::env;
 
 use crate::model::LiquidityCondition;
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+
+    let from = args.get(1).map(|s| s.as_str()).unwrap_or("USD");
+    let to = args.get(2).map(|s| s.as_str()).unwrap_or("INR");
+    let amount: f64 = args
+        .get(3)
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(100.0);
+
+    
     let routes = config::load_routes("../data/routes.csv");
     let graph = graph::build_graph(routes);
 
