@@ -77,3 +77,30 @@ pub fn find_best_route(
 
     (path, final_amount)
 }
+
+
+pub fn find_baseline_route(
+    graph: &Graph,
+    liquidity_map: &std::collections::HashMap<String, crate::model::LiquidityCondition>,
+    start: &str,
+    end: &str,
+    start_amount: f64,
+) -> f64 {
+
+    if let Some(edges) = graph.get(start) {
+        for edge in edges {
+            if edge.to == end {
+                return crate::cost::apply_cost(
+                    start_amount,
+                    edge.fee_pct,
+                    edge.slippage_pct,
+                    edge.fx_rate,
+                    liquidity_map.get(&edge.rail_id),
+                );
+            }
+        }
+    }
+
+    // fallback: no direct route found
+    0.0
+}

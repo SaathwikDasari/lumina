@@ -1,8 +1,11 @@
 {
   "route": [
-    "JPY",
+    "USD",
     "INR"
   ],
-  "final_amount": 54.52057352,
+  "final_amount": 8134.767967600001,
+  "baseline_amount": 7930.295999999999,
+  "user_savings": 204.47196760000134,
+  "platform_fee": 24.53663611200016,
   "advisory": "SEND_NOW"
 }

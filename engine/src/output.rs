@@ -5,6 +5,9 @@ use std::fs;
 pub struct ResultOutput {
     pub route: Vec<String>,
     pub final_amount: f64,
+    pub baseline_amount: f64,
+    pub user_savings: f64,
+    pub platform_fee: f64,
     pub advisory: String,
 }
 
