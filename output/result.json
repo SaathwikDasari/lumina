@@ -3,5 +3,6 @@
     "JPY",
     "INR"
   ],
-  "final_amount": 54.52057352
+  "final_amount": 54.52057352,
+  "advisory": "SEND_NOW"
 }

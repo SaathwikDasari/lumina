@@ -5,6 +5,7 @@ use std::fs;
 pub struct ResultOutput {
     pub route: Vec<String>,
     pub final_amount: f64,
+    pub advisory: String,
 }
 
 pub fn write_result(result: &ResultOutput) {
