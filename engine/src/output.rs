@@ -4,6 +4,7 @@ use std::fs;
 #[derive(Serialize)]
 pub struct ResultOutput {
     pub route: Vec<String>,
+    pub method: Vec<String>,
     pub final_amount: f64,
     pub baseline_amount: f64,
     pub user_savings: f64,

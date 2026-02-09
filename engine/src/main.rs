@@ -47,7 +47,7 @@ fn main() {
     };
 
     // Compute best + baseline
-    let (path, final_amount) = router::find_best_route(
+    let (path, method, final_amount) = router::find_best_route(
         &graph,
         &liquidity_map,
         from.as_str(),
@@ -70,6 +70,7 @@ fn main() {
     println!("Advisory: {}", advisory_str);
     println!("-------------------------------------------------------");
     println!("Best Route: {:?}", path);
+    println!("Method: {:?}", method);
     println!("Final Amount (best): {:.4}", final_amount);
     println!("Baseline Amount:     {:.4}", baseline_amount);
     println!("User Savings:        {:.4}", fee_breakdown.user_savings);
@@ -78,6 +79,7 @@ fn main() {
 
     let result = ResultOutput {
         route: path,
+        method: method,
         final_amount,
         baseline_amount: fee_breakdown.baseline_amount,
         user_savings: fee_breakdown.user_savings,

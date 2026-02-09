@@ -1,11 +1,14 @@
 {
   "route": [
-    "JPY",
+    "EUR",
     "INR"
   ],
-  "final_amount": 54.52057352,
-  "baseline_amount": 53.9763900455535,
-  "user_savings": 0.5441834744464984,
-  "platform_fee": 0.0653020169335798,
+  "method": [
+    "SEPA"
+  ],
+  "final_amount": 8857.998653999999,
+  "baseline_amount": 8769.584754934762,
+  "user_savings": 88.41389906523727,
+  "platform_fee": 10.609667887828472,
   "advisory": "SEND_NOW"
 }

@@ -10,12 +10,13 @@ pub fn find_best_route(
     start: &str,
     end: &str,
     start_amount: f64,
-) -> (Vec<String>, f64) {
+) -> (Vec<String>, Vec<String>, f64) {
     let start = start.trim().to_uppercase();
     let end = end.trim().to_uppercase();
 
     let mut best_amount: HashMap<String, f64> = HashMap::new();
     let mut parent: HashMap<String, String> = HashMap::new();
+    let mut parent_edge: HashMap<String, String> = HashMap::new();
     let mut visited: HashSet<String> = HashSet::new();
 
     best_amount.insert(start.clone(), start_amount);
@@ -60,8 +61,10 @@ pub fn find_best_route(
 
             if next_amount > best_next {
                 best_amount.insert(to_norm.clone(), next_amount);
-                parent.insert(to_norm, current.clone());
+                parent.insert(to_norm.clone(), current.clone());
+                parent_edge.insert(to_norm, edge.rail_id.clone());
             }
+
         }
     }
 
@@ -76,8 +79,33 @@ pub fn find_best_route(
     path.push(start.clone());
     path.reverse();
 
+
+    let mut execution_path: Vec<String> = Vec::new();
+    let mut node = end.clone();
+
+    let mut display_path = vec![start.clone()];
+
+    for rail in &execution_path {
+        if rail.contains("USDC") {
+            display_path.push("USDC".to_string());
+        } else if rail.contains("USDT") {
+            display_path.push("USDT".to_string());
+        }
+    }
+
+    display_path.push(end.clone());
+
+    while let Some(p) = parent.get(&node) {
+        if let Some(rail) = parent_edge.get(&node) {
+            execution_path.push(rail.clone());
+        }
+        node = p.clone();
+    }
+
+    execution_path.reverse();
+
     let final_amount = best_amount.get(&end).copied().unwrap_or(0.0);
-    (path, final_amount)
+    (display_path, execution_path, final_amount)
 }
 
 
