@@ -181,82 +181,9 @@ export default function Home() {
           {result && (
             <div className="space-y-6 border-t border-white/10 pt-6">
 
-<<<<<<< HEAD
-          {/* Amount */}
-          <input
-            type="number"
-            value={amount}
-            min={1}
-            onChange={(e) => setAmount(Number(e.target.value))}
-            className="bg-zinc-800 rounded-lg p-3 outline-none"
-            placeholder="Amount"
-          />
-        </div>
-
-        {/* Button */}
-        <button
-          onClick={optimize}
-          disabled={loading || from === to}
-          className="w-full py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition font-semibold disabled:opacity-50"
-        >
-          {loading ? "Optimizing..." : "Optimize Route"}
-        </button>
-
-        {/* Results */}
-        {result && (
-          <div className="space-y-4 border-t border-zinc-700 pt-6">
-
-            <div className="flex justify-between">
-              <span className="text-zinc-400">Route</span>
-              <span className="font-mono">
-                {if (result.route.length > 0) }
-              </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span className="text-zinc-400">Path</span>
-              <span className="font-mono">
-                {result.method.join(" → ")}
-              </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>Final Amount</span>
-              <span className="font-semibold">
-                {symbolFor(to)}{result.final_amount.toFixed(2)}
-              </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>Baseline</span>
-              <span>
-                {symbolFor(to)}{result.baseline_amount.toFixed(2)}
-              </span>
-            </div>
-
-            <div className="flex justify-between text-green-400">
-              <span>User Savings</span>
-              <span>
-                {symbolFor(to)}{result.user_savings.toFixed(2)}
-              </span>
-            </div>
-
-            <div className="flex justify-between text-yellow-400">
-              <span>Platform Fee</span>
-              <span>
-                {symbolFor(to)}{result.platform_fee.toFixed(2)}
-              </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>Advisory</span>
-              <span
-                className={`px-3 py-1 rounded-full text-sm font-semibold ${
-=======
               {/* Advisory */}
               <div
                 className={`text-center py-3 rounded-xl font-extrabold tracking-widest text-sm ${
->>>>>>> 40fc6f090340fbc86c5aceecc42f9469a88df8ba
                   result.advisory === "SEND_NOW"
                     ? "bg-green-500/20 text-green-400 shadow-[0_0_20px_rgba(34,197,94,0.4)]"
                     : "bg-orange-500/20 text-orange-400 shadow-[0_0_20px_rgba(249,115,22,0.4)]"

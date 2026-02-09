@@ -1,12 +1,15 @@
 {
   "route": [
-    "INR",
-    "USD"
+    "USD",
+    "INR"
   ],
-  "method": [],
-  "final_amount": 0.0,
-  "baseline_amount": 0.0,
-  "user_savings": 0.0,
-  "platform_fee": 0.0,
+  "method": [
+    "USDC_ETH",
+    "USDC_SOL"
+  ],
+  "final_amount": 8234.398120294945,
+  "baseline_amount": 7851.14173305,
+  "user_savings": 383.2563872449455,
+  "platform_fee": 41.171990601474725,
   "advisory": "SEND_NOW"
 }
