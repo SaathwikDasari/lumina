@@ -2,3 +2,5 @@
 /ui/node_modules
 /api/node_modules
 /engine/output/result.json
+/auth-service/node_modules
+/auth-service/.env

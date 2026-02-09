@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 /* =======================
-   Types
+    Types
 ======================= */
 
 type OptimizeResponse = {
@@ -23,7 +23,7 @@ type Currency = {
 };
 
 /* =======================
-   Currency Metadata
+    Currency Metadata
 ======================= */
 
 const CURRENCY_SYMBOL: Record<string, string> = {
@@ -60,7 +60,7 @@ const CURRENCIES: Currency[] = [
 ];
 
 /* =======================
-   Component
+    Component
 ======================= */
 
 export default function Home() {
@@ -69,6 +69,32 @@ export default function Home() {
   const [amount, setAmount] = useState(100);
   const [result, setResult] = useState<OptimizeResponse | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [email, setEmail] = useState("test@lumina.com");
+  const [password, setPassword] = useState("password123");
+  const [authMsg, setAuthMsg] = useState("");
+
+
+  const login = async () => {
+    setAuthMsg("Logging in...");
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_AUTH_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Login failed");
+
+      setAccessToken(data.accessToken);
+      setAuthMsg(`✅ Logged in as ${data.user.email}`);
+    } catch (e: any) {
+      setAuthMsg(`❌ ${e.message || "Login failed"}`);
+    }
+  };
 
   const optimize = async () => {
     setLoading(true);
@@ -110,6 +136,36 @@ export default function Home() {
               Autonomous Liquidity Optimization Engine
             </p>
           </div>
+
+          {/* Auth (temporary hackathon login box) */}
+          <div className="space-y-3">
+            <p className="text-xs text-zinc-400">Auth</p>
+            <div className="grid grid-cols-2 gap-3">
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="email"
+                className="rounded-xl bg-zinc-800/80 p-3 ring-1 ring-white/10 focus:ring-2 focus:ring-indigo-500 transition"
+              />
+              <input
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="password"
+                type="password"
+                className="rounded-xl bg-zinc-800/80 p-3 ring-1 ring-white/10 focus:ring-2 focus:ring-indigo-500 transition"
+              />
+            </div>
+
+            <button
+              onClick={login}
+              className="w-full py-3 rounded-2xl font-bold bg-zinc-800/80 hover:bg-zinc-700/80 ring-1 ring-white/10 transition"
+            >
+              {accessToken ? "✅ Logged In" : "Login"}
+            </button>
+
+            {authMsg && <p className="text-sm text-zinc-300">{authMsg}</p>}
+          </div>
+
 
           {/* Inputs */}
           <div className="grid grid-cols-3 gap-4">
@@ -242,6 +298,7 @@ export default function Home() {
       </div>
     </main>
   );
+
 
 }
 
