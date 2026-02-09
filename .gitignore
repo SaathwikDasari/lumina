@@ -1,3 +1,4 @@
 /engine/target
 /ui/node_modules
 /api/node_modules
+/engine/output/result.json

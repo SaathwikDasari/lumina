@@ -17,56 +17,54 @@ pub fn find_best_route(
     let mut best_amount: HashMap<String, f64> = HashMap::new();
     let mut parent: HashMap<String, String> = HashMap::new();
     let mut parent_edge: HashMap<String, String> = HashMap::new();
-    let mut visited: HashSet<String> = HashSet::new();
 
     best_amount.insert(start.clone(), start_amount);
 
-    loop {
-        let current = best_amount
-            .iter()
-            .filter(|(k, _)| !visited.contains(*k))
-            .max_by(|a, b| a.1.partial_cmp(b.1).unwrap())
-            .map(|(k, _)| k.clone());
+    let mut changed = true;
 
-        let current = match current {
-            Some(c) => c,
-            None => break,
-        };
+    let nodes: Vec<String> = graph.keys().cloned().collect();
+    let max_iterations = nodes.len(); // data-driven hop bound
 
-        if current == end {
-            break;
+    for _ in 0..max_iterations {
+        let mut updated = false;
+
+        let snapshot: Vec<(String, f64)> =
+            best_amount.iter().map(|(k, v)| (k.clone(), *v)).collect();
+
+        for (current, current_amount) in snapshot {
+            let edges = match graph.get(&current) {
+                Some(e) => e,
+                None => continue,
+            };
+
+            for edge in edges {
+                let liquidity = liquidity_map.get(&edge.rail_id);
+
+                let next_amount = apply_cost(
+                    current_amount,
+                    edge.fee_pct,
+                    edge.slippage_pct,
+                    edge.fx_rate,
+                    liquidity,
+                );
+
+                let to_norm = edge.to.trim().to_uppercase();
+                let best_next = best_amount.get(&to_norm).copied().unwrap_or(0.0);
+
+                if next_amount > best_next {
+                    best_amount.insert(to_norm.clone(), next_amount);
+                    parent.insert(to_norm.clone(), current.clone());
+                    parent_edge.insert(to_norm.clone(), edge.rail_id.clone());
+                    updated = true;
+                }
+            }
         }
 
-        visited.insert(current.clone());
-
-        let edges = match graph.get(&current) {
-            Some(e) => e,
-            None => continue,
-        };
-
-        let current_amount = best_amount[&current];
-
-        for edge in edges {
-            let liquidity = liquidity_map.get(&edge.rail_id);
-            let next_amount = apply_cost(
-                current_amount,
-                edge.fee_pct,
-                edge.slippage_pct,
-                edge.fx_rate,
-                liquidity,
-            );
-
-            let to_norm = edge.to.trim().to_uppercase();
-            let best_next = best_amount.get(&to_norm).copied().unwrap_or(0.0);
-
-            if next_amount > best_next {
-                best_amount.insert(to_norm.clone(), next_amount);
-                parent.insert(to_norm.clone(), current.clone());
-                parent_edge.insert(to_norm, edge.rail_id.clone());
-            }
-
+        if !updated {
+            break; // converged
         }
     }
+
 
     let mut path = Vec::new();
     let mut node = end.clone();
