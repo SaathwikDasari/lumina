@@ -1,4 +1,5 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 
 #[derive(Debug, Clone, Deserialize)]
@@ -31,4 +32,12 @@ pub struct LiquidityCondition {
     pub rail_id: String,
     pub fee_multiplier: f64,
     pub slippage_multiplier: f64,
+}
+
+#[derive(Deserialize, Debug, Serialize)]
+pub struct ExchangeRateResponse {
+    result: String,
+    base_code: String,
+    // This maps the "conversion_rates" field in JSON directly to a HashMap
+    conversion_rates: HashMap<String, f64>,
 }
