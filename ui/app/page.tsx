@@ -182,7 +182,7 @@ export default function Home() {
             <div className="flex justify-between">
               <span className="text-zinc-400">Route</span>
               <span className="font-mono">
-                {result.route.join(" → ")}
+                {if (result.route.length > 0) }
               </span>
             </div>
 
