@@ -6,14 +6,17 @@ mod cost;
 mod output;
 mod advisory;
 mod fee;
+mod fetch_api;
 
 use output::{ResultOutput, write_result};
 use std::collections::HashMap;
 use std::env;
+use reqwest;
 
 use crate::model::LiquidityCondition;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let args: Vec<String> = env::args().collect();
 
     let from = args
@@ -62,6 +65,9 @@ fn main() {
         to.as_str(),
         amount_input,
     );
+
+    // let resp = fetch_api::get("INR");
+    // println!("{:?}", resp.await.unwrap());
 
     let fee_breakdown = fee::compute_value_based_fee(final_amount, baseline_amount);
 
