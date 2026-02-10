@@ -1,6 +1,10 @@
 "use client";
 
+import CreatePaymentLink from "@/components/CreatePaymentLink"; 
+
 import { useState } from "react";
+
+const userWallet = "3fQnwiMa4o4THFvCA3YqGF2L871XJaLNtBToHtpvA1pL";
 
 type OptimizeResponse = {
   route: string[];
@@ -252,6 +256,16 @@ export default function Dashboard() {
               </div>
             </div>
           )}
+
+          {result && (
+      <div className="max-w-2xl mx-auto mt-8 animate-fade-in-up">
+        <CreatePaymentLink 
+          amount={amount}        // Pass the amount from input state
+          currency={from.split(" ")[0]}         // Hardcoded or from dropdown state
+          receiverWallet={userWallet} 
+        />
+      </div>
+    )}
         </div>
       </div>
     </main>

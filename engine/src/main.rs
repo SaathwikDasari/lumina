@@ -7,38 +7,29 @@ mod output;
 mod advisory;
 mod fee;
 mod fetch_api;
+mod state; // New
+mod api;   // New
 
-use output::{ResultOutput, write_result};
+use axum::{routing::{get, post}, Router};
+use std::sync::Arc;
 use std::collections::HashMap;
-use std::env;
-
 use crate::model::LiquidityCondition;
+use crate::state::AppState;
+use tower_http::cors::CorsLayer;
 
 #[tokio::main]
 async fn main() {
+    dotenv::dotenv().ok();
+
+    println!("🚀 Lumina Engine Starting...");
+
+    // 1. Fetch Latest Data (Your existing logic)
     if let Err(e) = fetch_api::generate_full_matrix().await {
-        eprintln!("Error generating matrix: {}", e);
+        eprintln!("⚠️ API Fetch failed, using cached data: {}", e);
     }
-    
-    let args: Vec<String> = env::args().collect();
 
-    let from = args
-        .get(1)
-        .map(|s| s.trim().to_uppercase())
-        .unwrap_or_else(|| "USD".to_string());
-
-    let to = args
-        .get(2)
-        .map(|s| s.trim().to_uppercase())
-        .unwrap_or_else(|| "INR".to_string());
-
-    let amount_input: f64 = args
-        .get(3)
-        .and_then(|s| s.trim().parse().ok())
-        .unwrap_or(100.0);
-
-    
-
+    // 2. Load Data (Your existing logic)
+    println!("📂 Loading routes and liquidity maps...");
     let routes = config::load_routes("../data/routes.csv");
     let graph = graph::build_graph(routes);
 
@@ -48,52 +39,22 @@ async fn main() {
         .map(|l| (l.rail_id.clone(), l))
         .collect();
 
-    let advisory = advisory::get_volatility_advisory("../data/price_history.csv");
-    let advisory_str = match advisory {
-        advisory::Advisory::SendNow => "SEND_NOW",
-        advisory::Advisory::Wait => "WAIT",
+    // 3. Create Shared State
+    let shared_state = AppState {
+        graph: Arc::new(graph),
+        liquidity: Arc::new(liquidity_map),
     };
 
-    // Compute best + baseline
-    let (path, method, final_amount) = router::find_best_route(
-        &graph,
-        &liquidity_map,
-        from.as_str(),
-        to.as_str(),
-        amount_input,
-    );
+    // 4. Define Server Routes
+    let app = Router::new()
+        .route("/optimize", post(api::optimize::optimize_route))      // The Route Calculator
+        .route("/create-payment-link", post(api::payment::create_payment_link)) // Stripe
+        .route("/webhook", post(api::webhook::stripe_webhook))        // Treasury Trigger
+        .layer(CorsLayer::permissive()) // Allows Next.js to call this
+        .with_state(shared_state);
 
-    let baseline_amount = router::find_baseline_route(
-        &graph,
-        &liquidity_map,
-        from.as_str(),
-        to.as_str(),
-        amount_input,
-    );
-
-    let fee_breakdown = fee::compute_value_based_fee(final_amount, baseline_amount);
-
-    println!("\n================= LUMINA ROUTE RESULT =================");
-    println!("From: {}   To: {}   Input Amount: {:.2}", from, to, amount_input);
-    println!("Advisory: {}", advisory_str);
-    println!("-------------------------------------------------------");
-    println!("Best Route: {:?}", path);
-    println!("Method: {:?}", method);
-    println!("Final Amount (best): {:.4}", final_amount);
-    println!("Baseline Amount:     {:.4}", baseline_amount);
-    println!("User Savings:        {:.4}", fee_breakdown.user_savings);
-    println!("Platform Fee:        {:.4}", fee_breakdown.platform_fee);
-    println!("=======================================================\n");
-
-    let result = ResultOutput {
-        route: path,
-        method: method,
-        final_amount,
-        baseline_amount: fee_breakdown.baseline_amount,
-        user_savings: fee_breakdown.user_savings,
-        platform_fee: fee_breakdown.platform_fee,
-        advisory: advisory_str.to_string(),
-    };
-
-    write_result(&result);
+    // 5. Start Server
+    println!("🌍 Lumina Server listening on http://0.0.0.0:4000");
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:4000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }

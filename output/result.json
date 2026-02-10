@@ -1,16 +1,16 @@
 {
   "route": [
-    "USD",
-    "USDC",
-    "EUR"
+    "JPY",
+    "BTC",
+    "INR"
   ],
   "method": [
     "DEFI_POOL",
     "DEFI_POOL"
   ],
-  "final_amount": 826347.9446058375,
-  "baseline_amount": 817729.2886149221,
-  "user_savings": 8618.655990915373,
-  "platform_fee": 1034.2387189098447,
+  "final_amount": 57.712203410023925,
+  "baseline_amount": 57.11027581897027,
+  "user_savings": 0.6019275910536521,
+  "platform_fee": 0.07223131092643825,
   "advisory": "SEND_NOW"
 }
