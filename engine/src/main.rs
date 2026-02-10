@@ -11,7 +11,6 @@ mod fetch_api;
 use output::{ResultOutput, write_result};
 use std::collections::HashMap;
 use std::env;
-use reqwest;
 
 use crate::model::LiquidityCondition;
 

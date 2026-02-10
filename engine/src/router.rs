@@ -1,109 +1,94 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use crate::cost::apply_cost;
 use crate::graph::Graph;
 use crate::model::LiquidityCondition;
 
+
 pub fn find_best_route(
-    graph: &Graph,
-    liquidity_map: &HashMap<String, LiquidityCondition>,
+    graph: &HashMap<String, Vec<crate::model::Route>>, 
+    liquidity_map: &HashMap<String, crate::model::LiquidityCondition>,
     start: &str,
     end: &str,
     start_amount: f64,
 ) -> (Vec<String>, Vec<String>, f64) {
-    let start = start.trim().to_uppercase();
-    let end = end.trim().to_uppercase();
+    let start_node = start.trim().to_uppercase();
+    let end_node = end.trim().to_uppercase();
 
     let mut best_amount: HashMap<String, f64> = HashMap::new();
     let mut parent: HashMap<String, String> = HashMap::new();
     let mut parent_edge: HashMap<String, String> = HashMap::new();
 
-    best_amount.insert(start.clone(), start_amount);
-
-    let mut changed = true;
+    best_amount.insert(start_node.clone(), start_amount);
 
     let nodes: Vec<String> = graph.keys().cloned().collect();
-    let max_iterations = nodes.len(); // data-driven hop bound
+    let max_iterations = nodes.len();
 
     for _ in 0..max_iterations {
         let mut updated = false;
 
-        let snapshot: Vec<(String, f64)> =
-            best_amount.iter().map(|(k, v)| (k.clone(), *v)).collect();
+        let snapshot: Vec<(String, f64)> = best_amount
+            .iter()
+            .map(|(k, v)| (k.clone(), *v))
+            .collect();
 
         for (current, current_amount) in snapshot {
-            let edges = match graph.get(&current) {
-                Some(e) => e,
-                None => continue,
-            };
+            if let Some(edges) = graph.get(&current) {
+                for edge in edges {
+                    let liquidity = liquidity_map.get(&edge.rail_id);
 
-            for edge in edges {
-                let liquidity = liquidity_map.get(&edge.rail_id);
+                    let next_amount = crate::router::apply_cost(
+                        current_amount,
+                        edge.fee_pct,
+                        edge.slippage_pct,
+                        edge.fx_rate,
+                        liquidity,
+                    );
 
-                let next_amount = apply_cost(
-                    current_amount,
-                    edge.fee_pct,
-                    edge.slippage_pct,
-                    edge.fx_rate,
-                    liquidity,
-                );
+                    let to_norm = edge.to.trim().to_uppercase();
+                    let best_next = *best_amount.get(&to_norm).unwrap_or(&0.0);
 
-                let to_norm = edge.to.trim().to_uppercase();
-                let best_next = best_amount.get(&to_norm).copied().unwrap_or(0.0);
-
-                if next_amount > best_next {
-                    best_amount.insert(to_norm.clone(), next_amount);
-                    parent.insert(to_norm.clone(), current.clone());
-                    parent_edge.insert(to_norm.clone(), edge.rail_id.clone());
-                    updated = true;
+                    if next_amount > best_next {
+                        best_amount.insert(to_norm.clone(), next_amount);
+                        parent.insert(to_norm.clone(), current.clone());
+                        parent_edge.insert(to_norm.clone(), edge.rail_id.clone());
+                        updated = true;
+                    }
                 }
             }
         }
 
         if !updated {
-            break; // converged
+            break;
         }
     }
 
+    let mut route_path: Vec<String> = Vec::new();
+    let mut method_path: Vec<String> = Vec::new();
 
-    let mut path = Vec::new();
-    let mut node = end.clone();
+    if best_amount.contains_key(&end_node) {
+        let mut curr = end_node.clone();
+        route_path.push(curr.clone());
 
-    while let Some(p) = parent.get(&node) {
-        path.push(node.clone());
-        node = p.clone();
-    }
-
-    path.push(start.clone());
-    path.reverse();
-
-
-    let mut execution_path: Vec<String> = Vec::new();
-    let mut node = end.clone();
-
-    let mut display_path = vec![start.clone()];
-
-    for rail in &execution_path {
-        if rail.contains("USDC") {
-            display_path.push("USDC".to_string());
-        } else if rail.contains("USDT") {
-            display_path.push("USDT".to_string());
+        while let Some(p) = parent.get(&curr) {
+            if let Some(rail) = parent_edge.get(&curr) {
+                method_path.push(rail.clone());
+            }
+            
+            curr = p.clone();
+            route_path.push(curr.clone());
         }
+
+        route_path.reverse();
+        method_path.reverse();
+    } else {
+        route_path.push(start_node.clone());
+        route_path.push(end_node.clone());
     }
 
-    display_path.push(end.clone());
+    let final_amount = *best_amount.get(&end_node).unwrap_or(&0.0);
 
-    while let Some(p) = parent.get(&node) {
-        if let Some(rail) = parent_edge.get(&node) {
-            execution_path.push(rail.clone());
-        }
-        node = p.clone();
-    }
-
-    execution_path.reverse();
-
-    let final_amount = best_amount.get(&end).copied().unwrap_or(0.0);
-    (display_path, execution_path, final_amount)
+    (route_path, method_path, final_amount)
 }
 
 

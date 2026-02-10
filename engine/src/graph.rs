@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+
 use crate::model::Route;
 
 pub type Graph = HashMap<String, Vec<Route>>;

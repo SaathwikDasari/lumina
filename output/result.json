@@ -1,14 +1,16 @@
 {
   "route": [
     "USD",
-    "INR"
+    "ETH",
+    "AUD"
   ],
   "method": [
-    "WISE"
+    "DEFI_POOL",
+    "DEFI_POOL"
   ],
-  "final_amount": 8927.981618032,
-  "baseline_amount": 8838.86920150702,
-  "user_savings": 89.11241652498029,
-  "platform_fee": 10.693489982997635,
+  "final_amount": 139.1709332085236,
+  "baseline_amount": 137.71940615495166,
+  "user_savings": 1.4515270535719367,
+  "platform_fee": 0.1741832464286324,
   "advisory": "SEND_NOW"
 }

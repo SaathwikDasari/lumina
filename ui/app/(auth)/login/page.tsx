@@ -35,7 +35,7 @@ export default function LoginPage() {
                 name="email" 
                 required 
                 className="w-full rounded-xl bg-zinc-800/80 p-3 ring-1 ring-white/10 hover:ring-indigo-400 focus:ring-2 focus:ring-indigo-500 transition outline-none text-white" 
-                placeholder="sathvik@example.com" 
+                placeholder="doraemon@example.com" 
               />
             </div>
 
