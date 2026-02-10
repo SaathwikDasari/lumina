@@ -51,5 +51,5 @@ app.post("/optimize", (req, res) => {
 });
 
 app.listen(4000, () => {
-  console.log("API running on http://localhost:4000");
+  console.log("API running on http://10.33.107.95:4000");
 });
