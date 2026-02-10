@@ -37,9 +37,9 @@ A modern, reactive frontend built with **Next.js**.
 
 | Layer | Technology |
 | :--- | :--- |
-| **System Language** | Rust (Axum, Tokio, Serde) |
+| **System Language** | Rust ( Tokio, Serde) |
 | **Blockchain** | Solidity, Foundry, Sepolia Testnet |
-| **Frontend** | Next.js, Tailwind CSS, Framer Motion |
+| **Frontend** | Next.js, Tailwind CSS |
 | **APIs** | Coinbase Pro, ExchangeRate-API |
 
 ---
@@ -74,3 +74,4 @@ A modern, reactive frontend built with **Next.js**.
    cd ui
    npm install
    npm run dev
+
