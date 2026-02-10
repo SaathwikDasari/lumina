@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { redirect } from 'next/navigation';
-
 
 type OptimizeResponse = {
   route: string[];
@@ -20,7 +18,6 @@ type Currency = {
   country: string;
 };
 
-
 const CURRENCY_SYMBOL: Record<string, string> = {
   USD: "$",
   INR: "₹",
@@ -37,7 +34,6 @@ const CURRENCY_SYMBOL: Record<string, string> = {
 };
 
 const symbolFor = (code: string) => CURRENCY_SYMBOL[code] ?? "";
-
 
 const CURRENCIES: Currency[] = [
   { code: "USD", type: "fiat", country: "United States" },
@@ -82,15 +78,31 @@ export default function Dashboard() {
     }
   };
 
+  const logout = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST" });
+    } finally {
+      window.location.href = "/login";
+    }
+  };
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-[radial-gradient(circle_at_top,_#1e1b4b,_#000)] text-white px-6">
       <div className="relative w-full max-w-xl">
-
         {/* Outer neon glow */}
         <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 blur-xl opacity-30 animate-pulse" />
 
         {/* Card */}
         <div className="relative backdrop-blur-2xl bg-zinc-900/70 border border-white/10 rounded-3xl p-8 shadow-2xl space-y-8">
+          {/* Logout button */}
+          <button
+            onClick={logout}
+            className="absolute top-4 right-4 px-4 py-2 rounded-xl
+                        bg-red-500/20 text-red-400 border border-red-500/30
+                        hover:bg-red-500/30 transition"
+          >
+            Logout
+          </button>
 
           {/* Header */}
           <div className="text-center space-y-1">
@@ -104,7 +116,6 @@ export default function Dashboard() {
 
           {/* Inputs */}
           <div className="grid grid-cols-3 gap-4">
-
             {/* FROM */}
             <select
               value={from}
@@ -112,14 +123,14 @@ export default function Dashboard() {
               className="rounded-xl bg-zinc-800/80 p-3 ring-1 ring-white/10 hover:ring-indigo-400 focus:ring-2 focus:ring-indigo-500 transition"
             >
               <optgroup label="Fiat">
-                {CURRENCIES.filter(c => c.type === "fiat").map(c => (
+                {CURRENCIES.filter((c) => c.type === "fiat").map((c) => (
                   <option key={c.code} value={c.code}>
                     {c.code} · {c.country}
                   </option>
                 ))}
               </optgroup>
               <optgroup label="Stablecoins">
-                {CURRENCIES.filter(c => c.type === "stablecoin").map(c => (
+                {CURRENCIES.filter((c) => c.type === "stablecoin").map((c) => (
                   <option key={c.code} value={c.code}>
                     {c.code} · {c.country}
                   </option>
@@ -133,7 +144,7 @@ export default function Dashboard() {
               onChange={(e) => setTo(e.target.value)}
               className="rounded-xl bg-zinc-800/80 p-3 ring-1 ring-white/10 hover:ring-purple-400 focus:ring-2 focus:ring-purple-500 transition"
             >
-              {CURRENCIES.map(c => (
+              {CURRENCIES.map((c) => (
                 <option key={c.code} value={c.code} disabled={c.code === from}>
                   {c.code} · {c.country}
                 </option>
@@ -171,7 +182,6 @@ export default function Dashboard() {
           {/* Results */}
           {result && (
             <div className="space-y-6 border-t border-white/10 pt-6">
-
               {/* Advisory */}
               <div
                 className={`text-center py-3 rounded-xl font-extrabold tracking-widest text-sm ${
@@ -221,23 +231,32 @@ export default function Dashboard() {
 
               {/* Metrics */}
               <div className="grid grid-cols-2 gap-4">
-                <SexyMetric label="Final Amount" value={`${symbolFor(to)}${result.final_amount.toFixed(2)}`} />
-                <SexyMetric label="Baseline" value={`${symbolFor(to)}${result.baseline_amount.toFixed(2)}`} />
-                <SexyMetric label="User Savings" value={`+${symbolFor(to)}${result.user_savings.toFixed(2)}`} green />
-                <SexyMetric label="Platform Fee" value={`${symbolFor(to)}${result.platform_fee.toFixed(2)}`} yellow />
+                <SexyMetric
+                  label="Final Amount"
+                  value={`${symbolFor(to)}${result.final_amount.toFixed(2)}`}
+                />
+                <SexyMetric
+                  label="Baseline"
+                  value={`${symbolFor(to)}${result.baseline_amount.toFixed(2)}`}
+                />
+                <SexyMetric
+                  label="User Savings"
+                  value={`+${symbolFor(to)}${result.user_savings.toFixed(2)}`}
+                  green
+                />
+                <SexyMetric
+                  label="Platform Fee"
+                  value={`${symbolFor(to)}${result.platform_fee.toFixed(2)}`}
+                  yellow
+                />
               </div>
-
             </div>
           )}
         </div>
       </div>
     </main>
   );
-
 }
-
-
-
 
 function SexyMetric({
   label,
