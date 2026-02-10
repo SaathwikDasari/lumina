@@ -39,5 +39,16 @@ pub struct ExchangeRateResponse {
     result: String,
     base_code: String,
     // This maps the "conversion_rates" field in JSON directly to a HashMap
-    conversion_rates: HashMap<String, f64>,
+    pub conversion_rates: HashMap<String, f64>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct RailData {
+    pub from: String,
+    pub to: String,
+    pub rail_id: String,
+    pub fee_pct: f64,
+    pub slippage_pct: f64,
+    pub fx_rate: f64,
+    pub latency_sec: u32,
 }

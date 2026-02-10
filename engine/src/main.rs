@@ -17,6 +17,10 @@ use crate::model::LiquidityCondition;
 
 #[tokio::main]
 async fn main() {
+    if let Err(e) = fetch_api::generate_full_matrix().await {
+        eprintln!("Error generating matrix: {}", e);
+    }
+    
     let args: Vec<String> = env::args().collect();
 
     let from = args
@@ -33,6 +37,8 @@ async fn main() {
         .get(3)
         .and_then(|s| s.trim().parse().ok())
         .unwrap_or(100.0);
+
+    
 
     let routes = config::load_routes("../data/routes.csv");
     let graph = graph::build_graph(routes);
@@ -65,9 +71,6 @@ async fn main() {
         to.as_str(),
         amount_input,
     );
-
-    // let resp = fetch_api::get("INR");
-    // println!("{:?}", resp.await.unwrap());
 
     let fee_breakdown = fee::compute_value_based_fee(final_amount, baseline_amount);
 

@@ -1,14 +1,14 @@
 {
   "route": [
-    "EUR",
+    "USD",
     "INR"
   ],
   "method": [
-    "SEPA"
+    "WISE"
   ],
-  "final_amount": 8857.998653999999,
-  "baseline_amount": 8769.584754934762,
-  "user_savings": 88.41389906523727,
-  "platform_fee": 10.609667887828472,
+  "final_amount": 8927.981618032,
+  "baseline_amount": 8838.86920150702,
+  "user_savings": 89.11241652498029,
+  "platform_fee": 10.693489982997635,
   "advisory": "SEND_NOW"
 }
