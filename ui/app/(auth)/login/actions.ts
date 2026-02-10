@@ -32,7 +32,9 @@ export async function handleLogin(formData: FormData) {
   });
 
   // Store JWT in HttpOnly cookie
-  cookies().set("token", token, {
+  (await
+    // Store JWT in HttpOnly cookie
+    cookies()).set("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

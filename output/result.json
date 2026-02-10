@@ -1,16 +1,16 @@
 {
   "route": [
     "USD",
-    "ETH",
-    "AUD"
+    "USDC",
+    "EUR"
   ],
   "method": [
     "DEFI_POOL",
     "DEFI_POOL"
   ],
-  "final_amount": 139.1709332085236,
-  "baseline_amount": 137.71940615495166,
-  "user_savings": 1.4515270535719367,
-  "platform_fee": 0.1741832464286324,
+  "final_amount": 826347.9446058375,
+  "baseline_amount": 817729.2886149221,
+  "user_savings": 8618.655990915373,
+  "platform_fee": 1034.2387189098447,
   "advisory": "SEND_NOW"
 }
